@@ -110,7 +110,7 @@ systemctl restart NetworkManager.service
 systemctl stop network.service
 systemctl start network.service
 chkconfig network on
-yum -y --disableplugin=fastestmirror install epel-release xorg-x11-xauth mc vim expect setroubleshoot* selinux-policy policycoreutils-python
+yum -y --disableplugin=fastestmirror install epel-release xorg-x11-xauth mc vim expect setroubleshoot setroubleshoot-server setroubleshoot-plugins selinux-policy selinux-policy-devel policycoreutils-python
 SCRIPT
 #
 # ipa node provisioning
@@ -139,7 +139,7 @@ firewall-cmd --permanent --add-port=88/udp
 firewall-cmd --permanent --add-port=464/udp
 firewall-cmd --permanent --add-port=123/udp
 firewall-cmd --reload
-ipa-server-install --realm=RHCE.LAB --domain=rhce.lab --ds-password=password --master-password=password --admin-password=password --mkhomedir --hostname=ipa.rhce.lab --ip-address=192.168.123.230 --forwarder=192.158.123.220 --reverse-zone=123.168.192.in-addr.arpa.
+ipa-server-install --realm=RHCE.LAB --domain=rhce.lab --ds-password=password --master-password=password --admin-password=password --mkhomedir --hostname=ipa.rhce.lab --ip-address=192.168.123.230 -U
 echo "password" | kinit admin
 klist
 echo "password" | ipa user-add lisa --first=lisa --last=jones --password
@@ -176,6 +176,10 @@ useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
 yum -y --disableplugin=fastestmirror install ipa-client
+semodule -i /vagrant/rhce/selinux/vmblock.pp
+semodule -R
+systemctl restart httpd
+systemctl enable httpd
 #ipa-getkeytab -s ipa.rhce.lab -p nfs/server1.rhce.lab -k /etc/krb5.keytab
 SCRIPT
 #
