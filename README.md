@@ -12,15 +12,15 @@ _I am not affilated with Red Hat nor do I have any idea what questions are on th
 
 ### Once installed
 * look in selinux folder for custom semodule to allow `httpd_t` access to `vmblock_t`, _this will need to be completed before objectives can be viewed in browser_
-* visit http://server1.rhce.lab for questions
-* install any other needed packages to answer questions
-* most questions will have help links to videos or repos
+* visit http://server1.rhce.lab for objectives
+* install any other needed packages to complete objectives
+* most objectives will have help links to videos or repos
 
 ### VM Details
 
-* server1.rhce.lab is main server, runs httpd for questions, can be setup as client
+* server1.rhce.lab is main server, runs httpd for objectives, can be setup as client
 * server2.rhce.lab can be setup as client server for NFS, POSTFIX, etc
-* server3.rhce.lab is ipa server which is configured on vagrant up, provides kerberos auth for NFS and User auth as well. I wouldn't do much on this VM
+* ipa.rhce.lab is ipa server checkout the ipa folder for set up details, provides kerberos auth for NFS and User auth as well. I wouldn't do much on this VM
 * each box has 4 nics to set up teaming/bonding
 * No ssh keys for root user have been copied between machines
 
