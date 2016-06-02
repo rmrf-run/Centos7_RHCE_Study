@@ -1,6 +1,6 @@
 # RHCE Lab built with packer and vagrant
 
-_I am not affilated with Red Hat nor do I have any idea what questions are on the RHCE exam. I assembled everything in this repo from the various sources below. Using this lab will not gurantee  you will pass your RHCE exam._
+**_I am not affilated with Red Hat nor do I have any idea what questions are on the RHCE exam. I assembled everything in this repo from the various sources below. Using this lab will not gurantee  you will pass your RHCE exam._**
 ***
 ### Get Started
 
@@ -13,7 +13,7 @@ _I am not affilated with Red Hat nor do I have any idea what questions are on th
 ### Once installed
 * look in selinux folder for custom semodule to allow `httpd_t` access to `vmblock_t`, _this will need to be completed before objectives can be viewed in browser_
 * visit http://server1.rhce.lab for objectives
-* install any other needed packages to complete objectives
+* install any other needed packages to complete objectives, i intentionally left several out
 * most objectives will have help links to videos or repos
 
 ### VM Details
@@ -30,7 +30,7 @@ _I am not affilated with Red Hat nor do I have any idea what questions are on th
 
 ***
 
-### Sources 
+### Resources 
 
 * [dreyou/rhce7](https://github.com/dreyou/rhce7)
 * [lucklylittle/RHCE](https://github.com/luckylittle/RHCE)
@@ -38,3 +38,5 @@ _I am not affilated with Red Hat nor do I have any idea what questions are on th
 * [iahmad-khan / RHCE-RHEL7](https://github.com/iahmad-khan/RHCE-RHEL7)
 * [Sander van Vugt / Youtube](https://www.youtube.com/channel/UComgXoI6pysmetOzuNH_TDQ)
 * [hfm/packer-centos-7](https://github.com/hfm/packer-centos-7)
+* [cronkeep wiki / helped with semodule for vmblock_t](https://github.com/cronkeep/cronkeep/wiki/Developer-Guide#allow-apache-access-to-vmblock_t-through-a-custom-policy-module)
+* [dillinger.io / Easy Markdown editor](http://dillinger.io/)
