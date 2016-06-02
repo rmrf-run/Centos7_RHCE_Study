@@ -9,7 +9,7 @@ After setup is complete
 [root@ipa vagrant]# firewall-cmd --permanent --add-port=123/udp
 [root@ipa vagrant]# firewall-cmd --reload
 
-"password" | kinit admin
+echo "password" | kinit admin
 klist
 echo "password" | ipa user-add lisa --first=lisa --last=jones --password
 echo "password" | ipa user-add linda --first=linda --last=thomsen --password

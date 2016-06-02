@@ -15,6 +15,8 @@ Vagrant.configure(2) do |config|
 	if ARGV[0] == "up"	
 	    vb.customize ["storagectl", :id, "--add", "sata", "--name", "SATA Controller" , "--portcount", 2, "--hostiocache", "on"]
   	end
+  config.vm.synced_folder ".", "/vagrant", disabled: 'true'
+  config.vm.synced_folder ".", "/vagrant/rhce", create: 'true'
   end
   config.ssh.forward_x11  = true
 #
@@ -35,11 +37,17 @@ Vagrant.configure(2) do |config|
     server1.vm.synced_folder "conf.d/", "/etc/httpd/conf.d"
     server1.vm.provider "virtualbox" do |vb|
 		if ARGV[0] == "up"
-			vb.customize ['createhd', '--filename', 'server1-drive1.vhd', '--size', 1024]
+			vb.customize ['createhd', 
+					'--filename', 
+					'server1-drive1.vhd', 
+					'--size', 1024]
       		end
       vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'server1-drive1.vhd']
         	if ARGV[0] == "up"
-			vb.customize ['createhd', '--filename', 'server1-drive2.vhd', '--size', 1024]
+			vb.customize ['createhd', 
+					'--filename', 
+					'server1-drive2.vhd', 
+					'--size', 1024]
       		end
       vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', 'server1-drive2.vhd']
     end
@@ -54,11 +62,17 @@ Vagrant.configure(2) do |config|
     server2.vm.provision "shell", inline: $server2
     server2.vm.provider "virtualbox" do |vb|
       		if ARGV[0] == "up"
-			vb.customize ['createhd', '--filename', 'server2-drive1.vhd', '--size', 1024]
+			vb.customize ['createhd', 
+					'--filename', 
+					'server2-drive1.vhd', 
+					'--size', 1024]
       		end
         vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'server2-drive1.vhd']
       		if ARGV[0] == "up"
-			vb.customize ['createhd', '--filename', 'server2-drive2.vhd', '--size', 1024]
+			vb.customize ['createhd', 
+					'--filename', 
+					'server2-drive2.vhd', 
+					'--size', 1024]
       		end
       vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', 'server2-drive2.vhd']
     end
@@ -96,7 +110,7 @@ systemctl restart NetworkManager.service
 systemctl stop network.service
 systemctl start network.service
 chkconfig network on
-yum -y --disableplugin=fastestmirror install epel-release xorg-x11-xauth mc vim expect
+yum -y --disableplugin=fastestmirror install epel-release xorg-x11-xauth mc vim expect setroubleshoot* selinux-policy policycoreutils-python
 SCRIPT
 #
 # ipa node provisioning
@@ -113,9 +127,29 @@ echo -e "192.168.123.220 server2.rhce.lab server2\n" >> /etc/hosts
 echo -e "192.168.123.210 server1.rhce.lab server1\n" >> /etc/hosts
 systemctl restart NetworkManager
 yum -y --disableplugin=fastestmirror update
-yum -y --disableplugin=fastestmirror install ipa-server bind-dyndb-ldap expect setroubleshoot* selinux-policy policycoreutils-python
+yum -y --disableplugin=fastestmirror install ipa-server bind-dyndb-ldap
 systemctl isolate multi-user.target
 #check in ipa folder for setup commands
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+firewall-cmd --permanent --add-service=ldap
+firewall-cmd --permanent --add-service=ldaps
+firewall-cmd --permanent --add-service=kerberos
+firewall-cmd --permanent --add-port=88/udp
+firewall-cmd --permanent --add-port=464/udp
+firewall-cmd --permanent --add-port=123/udp
+firewall-cmd --reload
+ipa-server-install --realm=RHCE.LAB --domain=rhce.lab --ds-password=password --master-password=password --admin-password=password --mkhomedir --hostname=ipa.rhce.lab --ip-address=192.168.123.230 --forwarder=192.158.123.220 --reverse-zone=123.168.192.in-addr.arpa.
+echo "password" | kinit admin
+klist
+echo "password" | ipa user-add lisa --first=lisa --last=jones --password
+echo "password" | ipa user-add linda --first=linda --last=thomsen --password
+ipa host-add --force server1.rhce.lab
+ipa host-add --force server2.rhce.lab
+ipa service-add --force nfs/server1.rhce.lab
+ipa service-add --force nfs/server2.rhce.lab
+ipa service-add --force cifs/server1.rhce.lab
+ipa service-add --force cifs/server2.rhce.lab
 SCRIPT
 #
 # server1 node provisioning
@@ -132,13 +166,16 @@ echo -e "192.168.123.230 ipa.rhce.lab ipa\n" >> /etc/hosts
 systemctl restart NetworkManager
 systemctl enable firewalld.service
 systemctl start firewalld.service
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
 useradd -s /sbin/nologin suser0
 useradd -s /sbin/nologin suser1
 useradd -s /sbin/nologin suser2
 useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
-yum -y --disableplugin=fastestmirror install ipa-client setroubleshoot* selinux-policy policycoreutils-python
+yum -y --disableplugin=fastestmirror install ipa-client
 #ipa-getkeytab -s ipa.rhce.lab -p nfs/server1.rhce.lab -k /etc/krb5.keytab
 SCRIPT
 #
@@ -156,13 +193,16 @@ echo -e "192.168.123.230 ipa.rhce.lab ipa\n" >> /etc/hosts
 systemctl restart NetworkManager
 systemctl enable firewalld.service
 systemctl start firewalld.service
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
 useradd -s /sbin/nologin suser0
 useradd -s /sbin/nologin suser1
 useradd -s /sbin/nologin suser2
 useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
-yum -y --disableplugin=fastestmirror install ipa-client setroubleshoot* selinux-policy policycoreutils-python
+yum -y --disableplugin=fastestmirror install ipa-client
 #ipa-getkeytab -s ipa.rhce.lab -p nfs/server2.rhce.lab -k /etc/krb5.keytab
 SCRIPT
 end
