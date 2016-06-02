@@ -110,7 +110,7 @@ systemctl restart NetworkManager.service
 systemctl stop network.service
 systemctl start network.service
 chkconfig network on
-yum -y --disableplugin=fastestmirror install epel-release xorg-x11-xauth mc vim expect setroubleshoot setroubleshoot-server setroubleshoot-plugins selinux-policy selinux-policy-devel policycoreutils-python
+yum -y --disableplugin=fastestmirror install epel-release
 SCRIPT
 #
 # ipa node provisioning
@@ -175,7 +175,7 @@ useradd -s /sbin/nologin suser2
 useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
-yum -y --disableplugin=fastestmirror install ipa-client setroubleshoot setroubleshoot-server setroubleshoot-plugins selinux-policy selinux-policy-devel policycoreutils-python
+yum -y --disableplugin=fastestmirror install ipa-client
 semodule -i /vagrant/rhce/selinux/vmblock.pp
 semodule -R
 systemctl restart httpd
@@ -206,7 +206,7 @@ useradd -s /sbin/nologin suser2
 useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
-yum -y --disableplugin=fastestmirror install ipa-client setroubleshoot setroubleshoot-server setroubleshoot-plugins selinux-policy selinux-policy-devel policycoreutils-python
+yum -y --disableplugin=fastestmirror install ipa-client
 #ipa-getkeytab -s ipa.rhce.lab -p nfs/server2.rhce.lab -k /etc/krb5.keytab
 SCRIPT
 end
