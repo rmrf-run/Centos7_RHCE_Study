@@ -1,0 +1,7 @@
+*.vdi
+.vagrant/
+packer_cache/
+output-virtualbox*
+.git/
+*.box
+*.vhd

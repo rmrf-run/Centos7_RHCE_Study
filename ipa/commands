@@ -1,0 +1,21 @@
+After setup is complete
+[root@ipa vagrant]# firewall-cmd --permanent --add-service=http
+[root@ipa vagrant]# firewall-cmd --permanent --add-service=https
+[root@ipa vagrant]# firewall-cmd --permanent --add-service=ldap
+[root@ipa vagrant]# firewall-cmd --permanent --add-service=ldaps
+[root@ipa vagrant]# firewall-cmd --permanent --add-service=kerberos
+[root@ipa vagrant]# firewall-cmd --permanent --add-port=88/udp
+[root@ipa vagrant]# firewall-cmd --permanent --add-port=464/udp
+[root@ipa vagrant]# firewall-cmd --permanent --add-port=123/udp
+[root@ipa vagrant]# firewall-cmd --reload
+
+"password" | kinit admin
+klist
+echo "password" | ipa user-add lisa --first=lisa --last=jones --password
+echo "password" | ipa user-add linda --first=linda --last=thomsen --password
+ipa host-add --force server1.rhce.lab
+ipa host-add --force server2.rhce.lab
+ipa service-add --force nfs/server1.rhce.lab
+ipa service-add --force nfs/server2.rhce.lab
+ipa service-add --force cifs/server1.rhce.lab
+ipa service-add --force cifs/server2.rhce.lab

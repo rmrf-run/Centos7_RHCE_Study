@@ -1,0 +1,5 @@
+The IPA Master Server will be configured with:
+Hostname:       ipa.rhce.lab
+IP address(es): 192.168.123.230
+Domain name:    rhce.lab
+Realm name:     RHCE.LAB

@@ -1,0 +1,37 @@
+set timeout 10
+
+spawn ipa-server-install --setup-dns
+
+#expect "Existing BIND configuration detected, overwrite? \\\[no\\\]: " { send "yes\r" }
+
+expect "Server host name \\\[master.example.com\\\]:" { send "ipa.rhce.lab\r" }
+
+expect "Please confirm the domain name \\\[rhce.lab\\\]:" { send "rhce.lab\r" }
+
+expect "Please provide a realm name \\\[RHCE.LAB\\\]:" { send "RHCE.LAB\r" }
+
+expect "Directory Manager password:" { send "password\r" }
+
+expect "Password (confirm):" { send "password\r" }
+
+expect "IPA admin password:" { send "password\r" }
+
+expect "Password (confirm):" { send "password\r" }
+
+expect "Do you want to configure DNS forwarders? \\\[yes\\\]:" { send "yes\r" }
+
+expect "Enter IP address for a DNS forwarder:" { send "192.168.123.220\r" }
+
+expect "Enter IP address for a DNS forwarder:" { send "\r" }
+
+expect "Do you want to configure the reverse zone? \\\[yes\\\]:" { send "yes\r" }
+
+expect "Please specify the reverse zone name \\\[123.168.192.in-addr.arpa.\\\]:" { send "\r" }
+
+expect "Continue to configure the system with these values? \\\[no\\\]:" { send "yes\r" }
+
+set timeout -1
+
+expect eof
+
+wait

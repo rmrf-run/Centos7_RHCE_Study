@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <link href="https://markable.in/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://markable.in//static/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://markable.in/static/editor/css/view_file.css">
+  <link rel="stylesheet" type="text/css" href="https://markable.in/static/css/code.css">
+</head>
+<body>
+  <div class="container">
+    <div id="content">
+      <h1 id="compiled-objectives">Compiled Objectives</h1>
+<hr />
+<h2 id="use-network-teaming-to-aggregate-2-interfaces-to-connect-between-server1-and-server2">Use network teaming to aggregate 2 interfaces to connect between server1 and server2</h2>
+<h3 id="tips">Tips</h3>
+<ul>
+<li><a href="https://www.certdepot.net/rhel7-configure-network-teaming-between-two-rhel-systems/">CertDepot / Teaming</a></li>
+<li>nmcli-examples provides exact way to add team</li>
+</ul>
+<pre><code>[Dev/Centos7_RHCE]# man -k nmcli
+nmcli (1)            - command - line tool for controlling NetworkManager 
+nmcli-examples (5)   - usage examples of nmcli 
+</code></pre>
+
+<hr />
+<h2 id="use-firewalld-to-configure-packet-filtering-rich-rules-and-port-forwarding-between-server1-and-server2">Use firewalld to configure packet filtering, rich rules, and port forwarding between server1 and server2</h2>
+<h3 id="tips_1">Tips</h3>
+<ul>
+<li>try changing ssh listening port on server2</li>
+<li>set selinux for new port</li>
+<li>forward default port 22 to new port with firewall-cmd</li>
+<li>verify port 22 still works by loging in from server1</li>
+<li>run <code>ss -tulpn</code> to verify port isn't listening on server2 but new ssh port is listening on whatever you set it to</li>
+</ul>
+<pre><code>[Dev/Centos7_RHCE]# man -k firewall
+firewall-cmd (1)     - firewalld command line client
+firewall-config (1)  - firewalld GUI configuration tool
+firewall-offline-cmd (1) - firewalld offline command line client
+firewalld (1)        - Dynamic Firewall Manager
+firewalld.conf (5)   - firewalld configuration file
+firewalld.dbus (5)   - firewalld D-Bus interface description
+firewalld.direct (5) - firewalld direct configuration file
+firewalld.icmptype (5) - firewalld icmptype configuration files
+firewalld.lockdown-whitelist (5) - firewalld lockdown whitelist configuration file
+firewalld.richlanguage (5) - Rich Language Documentation
+firewalld.service (5) - firewalld service configuration files
+firewalld.zone (5)   - firewalld zone configuration files
+firewalld.zones (5)  - firewalld zones
+</code></pre>
+
+<hr />
+<h2 id="configure-server2-as-iscsi-target-and-server1-as-iscsi-initiator-that-persistently-mounts-the-iscsi-target-from-server-1">Configure server2 as iscsi target and server1 as iscsi initiator that persistently mounts the iSCSI target from server 1.</h2>
+<h3 id="tips_2">Tips</h3>
+<ul>
+<li><a href="https://www.certdepot.net/rhel7-configure-iscsi-target-initiator-persistently/">Cert Depot / iScsi</a></li>
+<li>create new lvm from one of secondary drives</li>
+<li>create blockstore</li>
+<li>create iqn</li>
+<li>create acl/lun/portal</li>
+<li>add port to firewall</li>
+<li>discover from server1</li>
+</ul>
+<pre><code>[Dev/Centos7_RHCE]# man -k iscsi
+iscsi-iname (8)      - iSCSI initiator name generation tool
+iscsiadm (8)         - open-iscsi administration utility
+iscsid (8)           - Open-iSCSI daemon
+iscsistart (8)       - iSCSI boot tool
+iscsiuio (8)         - iSCSI UserSpace I/O driver
+</code></pre>
+
+<hr />
+<h2 id="use-procsys-and-sysctl-modify-and-set-kernel-parameters">Use /proc/sys and sysctl modify and set kernel parameters</h2>
+<h3 id="tips_3">Tips</h3>
+<ul>
+<li><a href="https://www.certdepot.net/rhel7-use-sysctl/">Cert Depot / Sysctl</a></li>
+<li>permanent changes need to be made in <code>/etc/sysctl.conf</code> </li>
+<li><code>sysctl -p</code> to activate changes</li>
+<li></li>
+</ul>
+<hr />
+<h2 id="http-configurations-multiple-steps">HTTP configurations multiple steps</h2>
+<ul>
+<li>configure virtual host - set up server2 to serve page of <code>server2.rhce.lab - Webserver is running</code></li>
+<li>configure private directory - set up server2 to server virtual host of secret.rhce.lab with password protection</li>
+<li>Deploy simple hello world cgi application - run perl script with server2.rhce.lab/perl</li>
+<li>Configure group managed content</li>
+<li>Configure secret.rhce.lab to serve content over TLS</li>
+</ul>
+<h2 id="tips_4">Tips</h2>
+<hr />
+<h2 id="configure-cache-only-dns-server">Configure cache only dns server</h2>
+<ul>
+<li>install unbound on server1</li>
+<li>configure for only local subnet for server1, server2, and server3</li>
+<li>forward dns requests upstream</li>
+</ul>
+<h3 id="tips_5">Tips</h3>
+<hr />
+<h2 id="set-up-ntpchrony-and-sync-with-local-peers">Set up NTP/Chrony and sync with local peers</h2>
+<h3 id="tips_6">Tips</h3>
+<ul>
+<li><a href="https://www.certdepot.net/rhel7-set-ntp-service/">Cert Depot / NTP</a></li>
+<li>fairly straight forward for using chrony to sync with peers, add subnet in <code>/etc/chrony.conf</code> open firewall to use ntp, do this on server1</li>
+<li>on server2 disable <code>servers</code> in <code>/etc/chrony.conf</code> add <code>peer server1.rhce.lab</code></li>
+</ul>
+    </div>
+  </div>
+</body>
+</html>
