@@ -22,6 +22,13 @@ Vagrant.configure(2) do |config|
 #
 # 
 #
+  config.vm.define :ipa do |ipa|
+    ipa.vm.network "private_network", ip: "192.168.123.230"
+    ipa.vm.hostname = "ipa.rhce.lab"
+    ipa.vm.synced_folder "./ipa", "/vagrant/ipa"
+    ipa.vm.provision "shell", inline: $ipa
+  end
+
   config.vm.define :server1 do |server1|
     server1.ssh.forward_x11  = true
     server1.vm.network "private_network", ip: "192.168.123.210"
@@ -76,12 +83,6 @@ Vagrant.configure(2) do |config|
       		end
       vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', 'server2-drive2.vhd']
     end
-  end
-  config.vm.define :ipa do |ipa|
-    ipa.vm.network "private_network", ip: "192.168.123.230"
-    ipa.vm.hostname = "ipa.rhce.lab"
-    ipa.vm.synced_folder "./ipa", "/vagrant/ipa"
-    ipa.vm.provision "shell", inline: $ipa
   end
 #
 # Common node provisioning
