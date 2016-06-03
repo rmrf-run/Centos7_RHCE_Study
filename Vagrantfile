@@ -137,6 +137,8 @@ hostnamectl set-hostname ipa.rhce.lab
 yum -y --disableplugin=fastestmirror install ipa-server bind-dyndb-ldap
 systemctl isolate multi-user.target
 #check in ipa folder for setup commands
+systemctl enable firewalld
+systemctl start firewalld
 for i in http https ldap ldaps kerberos kpasswd dns ntp; do firewall-cmd --permanent --add-service $i; done
 firewall-cmd --reload
 ipa-server-install --realm=RHCE.LAB --domain=rhce.lab --ds-password=password --master-password=password --admin-password=password --mkhomedir --hostname=ipa.rhce.lab --ip-address=192.168.123.230 -U
@@ -186,6 +188,9 @@ semodule -i /vagrant/rhce/selinux/vmblock.pp
 semodule -R
 systemctl restart httpd
 systemctl enable httpd
+ipa-client-install --realm=RHCE.LAB --domain=rhce.lab --server=ipa.rhce.lab --mkhomedir --hostname server1.rhce.lab --ip-address=192.168.123.210 -p admin --password=password -U
+echo "password" | kinit admin
+klist
 ipa-getkeytab -s ipa.rhce.lab -p nfs/server1.rhce.lab -k /etc/krb5.keytab
 kinit -k nfs/server1.rhce.lab
 klist
@@ -216,9 +221,10 @@ useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
 yum -y --disableplugin=fastestmirror install ipa-client
+ipa-client-install --realm=RHCE.LAB --domain=rhce.lab --server=ipa.rhce.lab --mkhomedir --hostname server2.rhce.lab --ip-address=192.168.123.220 -p admin --password=password -U
+echo "password" | kinit admin
 ipa-getkeytab -s ipa.rhce.lab -p nfs/server2.rhce.lab -k /etc/krb5.keytab
 kinit -k nfs/server2.rhce.lab
 klist
-scp /etc/krb5.keytab ipa.rhce.lab:/var/ftp/pub/server2.keytab
 SCRIPT
 end
