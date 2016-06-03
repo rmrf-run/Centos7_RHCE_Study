@@ -26,6 +26,7 @@ Vagrant.configure(2) do |config|
     ipa.vm.network "private_network", ip: "192.168.123.230"
     ipa.vm.hostname = "ipa.rhce.lab"
     ipa.vm.synced_folder "./ipa", "/vagrant/ipa"
+    ipa.vm.provision "shell", inline: $common
     ipa.vm.provision "shell", inline: $ipa
   end
 
@@ -36,6 +37,7 @@ Vagrant.configure(2) do |config|
     server1.vm.network "private_network", ip: "192.168.123.212",virtualbox__intnet: "true",nic_type: "virtio"
     server1.vm.network "private_network", ip: "192.168.123.213",virtualbox__intnet: "true",nic_type: "virtio"
     server1.vm.hostname = "server1.rhce.lab"
+    server1.vm.provision "shell", inline: $common
     server1.vm.provision "shell", inline: $server1
     server1.vm.synced_folder "rhce/", "/var/www/html/rhce", 
 			owner: "apache", 
@@ -66,6 +68,7 @@ Vagrant.configure(2) do |config|
     server2.vm.network "private_network", ip: "192.168.123.222",virtualbox__intnet: "true",nic_type: "virtio"
     server2.vm.network "private_network", ip: "192.168.123.223",virtualbox__intnet: "true",nic_type: "virtio"
     server2.vm.hostname = "server2.rhce.lab"
+    server2.vm.provision "shell", inline: $common
     server2.vm.provision "shell", inline: $server2
     server2.vm.provider "virtualbox" do |vb|
       		if ARGV[0] == "up"
@@ -87,7 +90,7 @@ Vagrant.configure(2) do |config|
 #
 # Common node provisioning
 #
-$ipa = <<SCRIPT
+$common = <<SCRIPT
 #!/bin/sh
 >&2 echo Common setup
 #
@@ -111,7 +114,9 @@ systemctl restart NetworkManager.service
 systemctl stop network.service
 systemctl start network.service
 chkconfig network on
-yum -y --disableplugin=fastestmirror install epel-release
+#Disable since epel isn't for sure available on exam
+#yum -y --disableplugin=fastestmirror install epel-release
+#
 SCRIPT
 #
 # ipa node provisioning
@@ -128,23 +133,23 @@ echo -e "192.168.123.220 server2.rhce.lab server2\n" >> /etc/hosts
 echo -e "192.168.123.210 server1.rhce.lab server1\n" >> /etc/hosts
 systemctl restart NetworkManager
 yum -y --disableplugin=fastestmirror update
+hostnamectl set-hostname ipa.rhce.lab
 yum -y --disableplugin=fastestmirror install ipa-server bind-dyndb-ldap
 systemctl isolate multi-user.target
 #check in ipa folder for setup commands
-firewall-cmd --permanent --add-service=http
-firewall-cmd --permanent --add-service=https
-firewall-cmd --permanent --add-service=ldap
-firewall-cmd --permanent --add-service=ldaps
-firewall-cmd --permanent --add-service=kerberos
-firewall-cmd --permanent --add-port=88/udp
-firewall-cmd --permanent --add-port=464/udp
-firewall-cmd --permanent --add-port=123/udp
+for i in http https ldap ldaps kerberos kpasswd dns ntp; do firewall-cmd --permanent --add-service $i; done
 firewall-cmd --reload
 ipa-server-install --realm=RHCE.LAB --domain=rhce.lab --ds-password=password --master-password=password --admin-password=password --mkhomedir --hostname=ipa.rhce.lab --ip-address=192.168.123.230 -U
 echo "password" | kinit admin
 klist
 echo "password" | ipa user-add lisa --first=lisa --last=jones --password
 echo "password" | ipa user-add linda --first=linda --last=thomsen --password
+yum install -y vsftpd
+systemctl enable vsftpd
+systemctl start vsftpd
+cp ~/cacert.p12 /var/ftp/pub
+firewall-cmd --permanent --add-service ftp
+firewall-cmd --reload
 ipa host-add --force server1.rhce.lab
 ipa host-add --force server2.rhce.lab
 ipa service-add --force nfs/server1.rhce.lab
@@ -181,7 +186,10 @@ semodule -i /vagrant/rhce/selinux/vmblock.pp
 semodule -R
 systemctl restart httpd
 systemctl enable httpd
-#ipa-getkeytab -s ipa.rhce.lab -p nfs/server1.rhce.lab -k /etc/krb5.keytab
+ipa-getkeytab -s ipa.rhce.lab -p nfs/server1.rhce.lab -k /etc/krb5.keytab
+kinit -k nfs/server1.rhce.lab
+klist
+mkdir /repo
 SCRIPT
 #
 # server2 node provisioning
@@ -208,6 +216,9 @@ useradd -s /sbin/nologin tuser0
 useradd -s /sbin/nologin tuser1
 useradd -s /sbin/nologin tuser2
 yum -y --disableplugin=fastestmirror install ipa-client
-#ipa-getkeytab -s ipa.rhce.lab -p nfs/server2.rhce.lab -k /etc/krb5.keytab
+ipa-getkeytab -s ipa.rhce.lab -p nfs/server2.rhce.lab -k /etc/krb5.keytab
+kinit -k nfs/server2.rhce.lab
+klist
+scp /etc/krb5.keytab ipa.rhce.lab:/var/ftp/pub/server2.keytab
 SCRIPT
 end
