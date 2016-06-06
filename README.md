@@ -12,9 +12,11 @@
 * visit http://server1.rhce.lab for objectives
 * install any other needed packages to complete objectives, i intentionally left several out
 * most objectives will have help links to videos or repos
+ 
 ### Continuing
 * after running each practice run `vagrant destroy -f` to destroy enviroment
 * run `vagrant up` to create fresh enviroment
+
 ### VM Details
 * server1.rhce.lab is main server, runs httpd for objectives, can be setup as client
 * server2.rhce.lab can be setup as client server for NFS, POSTFIX, etc
