@@ -132,7 +132,8 @@ echo -e "192.168.123.230 ipa.rhce.lab ipa\n" >> /etc/hosts
 echo -e "192.168.123.220 server2.rhce.lab server2\n" >> /etc/hosts
 echo -e "192.168.123.210 server1.rhce.lab server1\n" >> /etc/hosts
 systemctl restart NetworkManager
-yum -y --disableplugin=fastestmirror update
+#Removing update
+#yum -y --disableplugin=fastestmirror update
 hostnamectl set-hostname ipa.rhce.lab
 yum -y --disableplugin=fastestmirror install ipa-server bind-dyndb-ldap
 systemctl isolate multi-user.target
