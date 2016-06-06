@@ -12,16 +12,20 @@
 * visit http://server1.rhce.lab for objectives
 * install any other needed packages to complete objectives, i intentionally left several out
 * most objectives will have help links to videos or repos
-
+### Continuing
+* after running each practice run `vagrant destroy -f` to destroy enviroment
+* run `vagrant up` to create fresh enviroment
 ### VM Details
 * server1.rhce.lab is main server, runs httpd for objectives, can be setup as client
 * server2.rhce.lab can be setup as client server for NFS, POSTFIX, etc
 * ipa.rhce.lab is ipa server it provides kerberos auth for NFS and User auth as well. I wouldn't do much on this VM
-* server1 and server2 have 3 extra nics to set up teaming/bonding
+* server1 and server2 have 3 extra nics to set up teaming/bonding*
 * No ssh keys for root user have been copied between machines
 
 ### Items still needed
 * ipv6 support to configure nic with ipv6
+* teaming setup currently will not work
+* issues suspending/resuming VMs
 
 ***
 
