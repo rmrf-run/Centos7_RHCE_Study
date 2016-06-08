@@ -126,8 +126,6 @@ $ipa = <<SCRIPT
 >&2 echo Ipa setup
 #
 echo > /etc/hosts
-sed -i 's/ipa.rhce.lab//' /etc/hosts
-sed -i 's/ipa//' /etc/hosts
 echo -e "192.168.123.230 ipa.rhce.lab ipa\n" >> /etc/hosts
 echo -e "192.168.123.220 server2.rhce.lab server2\n" >> /etc/hosts
 echo -e "192.168.123.210 server1.rhce.lab server1\n" >> /etc/hosts
@@ -167,8 +165,6 @@ $server1 = <<SCRIPT
 #!/bin/sh
 >&2 echo Server1 setup
 echo > /etc/hosts
-sed -i 's/server1.rhce.lab//' /etc/hosts
-sed -i 's/server1//' /etc/hosts
 echo -e "192.168.123.220 server2.rhce.lab server2\n" >> /etc/hosts
 echo -e "192.168.123.210 server1.rhce.lab server1\n" >> /etc/hosts
 echo -e "192.168.123.230 ipa.rhce.lab ipa\n" >> /etc/hosts
@@ -204,8 +200,6 @@ $server2 = <<SCRIPT
 #!/bin/sh
 >&2 echo Server2 setup
 echo > /etc/hosts
-sed -i 's/server2.rhce.lab//' /etc/hosts
-sed -i 's/server2//' /etc/hosts
 echo -e "192.168.123.220 server2.rhce.lab server2\n" >> /etc/hosts
 echo -e "192.168.123.210 server1.rhce.lab server1\n" >> /etc/hosts
 echo -e "192.168.123.230 ipa.rhce.lab ipa\n" >> /etc/hosts
