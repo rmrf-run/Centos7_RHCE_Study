@@ -1,24 +1,22 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #
+
 Vagrant.configure(2) do |config|
   # 
   # Vagrant boxes for libvirt or virtualbox
   # 
   #Change to bento/centos-7.2 if you didn't build the box with packer
+  #If you didn't build with packer then some settings below will need to be changed
   #  packer build packer.json
   config.vm.box = "centos7.2"
   #comment below line if you didn't build with packer
   config.vm.box_url = "./centos7.2.box"
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "1024"]
-	if ARGV[0] == "up"	
-	    vb.customize ["storagectl", :id, "--add", "sata", "--name", "SATA Controller" , "--portcount", 2, "--hostiocache", "on"]
-  	end
   config.vm.synced_folder ".", "/vagrant", disabled: 'true'
   config.vm.synced_folder ".", "/vagrant/rhce", create: 'true'
   end
-  config.ssh.forward_x11  = true
 #
 # 
 #
@@ -31,7 +29,6 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.define :server1 do |server1|
-    server1.ssh.forward_x11  = true
     server1.vm.network "private_network", ip: "192.168.123.210"
     server1.vm.network "private_network", ip: "192.168.123.211",virtualbox__intnet: "true",nic_type: "virtio"
     server1.vm.network "private_network", ip: "192.168.123.212",virtualbox__intnet: "true",nic_type: "virtio"
@@ -45,24 +42,13 @@ Vagrant.configure(2) do |config|
 			create: "true"
     server1.vm.synced_folder "conf.d/", "/etc/httpd/conf.d"
     server1.vm.provider "virtualbox" do |vb|
-		if ARGV[0] == "up"
-			vb.customize ['createhd', 
-					'--filename', 
-					'server1-drive1.vhd', 
-					'--size', 1024]
+		unless File.exist?('server1-drive1.vmdk')
+			vb.customize ['createhd','--filename','server1-drive1.vmdk','--variant','Fixed','--size', 1 * 1024]
       		end
-      vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'server1-drive1.vhd']
-        	if ARGV[0] == "up"
-			vb.customize ['createhd', 
-					'--filename', 
-					'server1-drive2.vhd', 
-					'--size', 1024]
-      		end
-      vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', 'server1-drive2.vhd']
-    end
+      vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'server1-drive1.vmdk']
   end
+end
   config.vm.define :server2 do |server2|
-    server2.ssh.forward_x11  = true
     server2.vm.network "private_network", ip: "192.168.123.220"
     server2.vm.network "private_network", ip: "192.168.123.221",virtualbox__intnet: "true",nic_type: "virtio"
     server2.vm.network "private_network", ip: "192.168.123.222",virtualbox__intnet: "true",nic_type: "virtio"
@@ -71,22 +57,12 @@ Vagrant.configure(2) do |config|
     server2.vm.provision "shell", inline: $common
     server2.vm.provision "shell", inline: $server2
     server2.vm.provider "virtualbox" do |vb|
-      		if ARGV[0] == "up"
-			vb.customize ['createhd', 
-					'--filename', 
-					'server2-drive1.vhd', 
-					'--size', 1024]
+      		unless File.exist?('server2-drive1.vmdk')
+			vb.customize ['createhd', '--filename', 'server2-drive1.vmdk', '--variant', 'Fixed', '--size', 1 * 1024]
       		end
-        vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'server2-drive1.vhd']
-      		if ARGV[0] == "up"
-			vb.customize ['createhd', 
-					'--filename', 
-					'server2-drive2.vhd', 
-					'--size', 1024]
-      		end
-      vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', 'server2-drive2.vhd']
-    end
+        vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'server2-drive1.vmdk']
   end
+end
 #
 # Common node provisioning
 #

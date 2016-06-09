@@ -6,3 +6,4 @@ output-virtualbox*
 *.box
 *.vhd
 *.Vagrant*
+*.vmdk
