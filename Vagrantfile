@@ -167,7 +167,9 @@ klist
 ipa-getkeytab -s ipa.rhce.lab -p nfs/server1.rhce.lab -k /etc/krb5.keytab
 kinit -k nfs/server1.rhce.lab
 klist
-mkdir /repo
+if [ ! -d '/repo' ];then
+	mkdir /repo
+fi
 SCRIPT
 #
 # server2 node provisioning

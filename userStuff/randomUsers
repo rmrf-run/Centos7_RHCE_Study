@@ -1,0 +1,24 @@
+#!/bin/bash
+#set -x
+read -p "How many accounts do you want in the file? " numAccts
+STARTNUM=1
+ENDNUM=$numAccts
+echo "Counting down"
+echo "+++++++++++++"
+for i in $(eval echo {$STARTNUM..$ENDNUM}); do
+	#pick a number between 2000 (high enough to not have numbers in the word)  and about the number of words in /usr/share/dict/words
+	ranNum1=$(shuf -i 2000-479000 -n 1)
+	sleep 0
+	ranNum2=$(shuf -i 2000-479000 -n 1)
+	sleep 0
+	#picking a word based on our random number
+	selectedWord=$(sed -n "${ranNum1}p" /usr/share/dict/words)
+	#sleep 1
+	selectedWord1=$(sed -n "${ranNum2}p" /usr/share/dict/words)
+	#sleep 1
+	ranNum3=$(shuf -i 10-20 -n 1)
+	#sleep 1
+	ranNum4=$(shuf -i 1-5 -n 1)
+	echo "${selectedWord}:${selectedWord1}:${ranNum3}:${ranNum4}" >> userList.txt
+	echo ${i}
+done 

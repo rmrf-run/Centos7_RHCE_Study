@@ -1,0 +1,14 @@
+#!/bin/bash
+read -p "How many DBs do you want to create? " dbNumber
+dbImport=$[ $RANDOM % 3 ]
+startNum=1
+echo "Creating $dbNumber databases"
+for i in $(eval echo {$startNum..$dbNumber})
+do 
+	dbName=$[ $RANDOM ]
+	mysql -uroot <<MYSQL_SCRIPT
+	CREATE DATABASE ${dbName}_${i};
+	FLUSH PRIVILEGES;
+MYSQL_SCRIPT
+	mysql -u root ${dbName}_${i} < dump_$dbImport
+done
